@@ -120,22 +120,18 @@ function calculator(number = 0) {
 
   return {
     sum(...args) {
-      let result = number;
-
       for (const arg of args) {
-        result += arg;
+        number += arg;
       }
 
-      return result;
+      return number;
     },
     dif(...args) {
-      let result = number;
-
       for (const arg of args) {
-        result -= arg;
+        number -= arg;
       }
 
-      return result;
+      return number;
     },
     div(...args) {
       let result = number;
@@ -150,17 +146,41 @@ function calculator(number = 0) {
       return result;
     },
     mul(...args) {
-      let result = number;
-
       for (const arg of args) {
-        result *= arg;
+        number *= arg;
       }
 
-      return result;
+      return number;
     },
   };
 }
+// function calculator(number = 0) {
+//   if (typeof number !== 'number') {
+//     throw new Error('number is not a number');
+//   }
 
+//   return{
+//     sum(...args) {
+//       args.reduce((number, arg) => number + arg, 0 );
+//       return number;
+//     },
+//     dif(...args) {
+//       args.reduce((number, arg) => number - arg, 0 );
+//       return number;
+//     },
+//     div(...args) {
+//       args.reduce((number, arg) => number / arg, 0 );
+//       if (arg === 0) {
+//         throw new Error('division by 0');
+//       }
+//       return number;
+//     },
+//     mul(...args) {
+//       args.reduce( (number, arg) => number * arg, 0 );
+//       return number;
+//     },
+//   }
+// }
 /* При решении задач, постарайтесь использовать отладчик */
 
 export { isAllTrue, isSomeTrue, returnBadArguments, calculator };
