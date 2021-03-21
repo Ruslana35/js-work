@@ -13,7 +13,6 @@
 function createDivWithText(text) {
   const div = document.createElement('div');
   div.textContent = text;
-  document.body.appendChild(div);
   return div;
 }
 
@@ -53,7 +52,7 @@ function findAllPSiblings(where) {
   const allSiblings = [];
 
   for (const el of where.children) {
-    if (el.nextElementSibling.tagName === 'P') {
+    if (el.nextElementSibling && el.nextElementSibling.tagName === 'P') {
       allSiblings.push(el);
     }
   }
@@ -118,40 +117,19 @@ function deleteTextNodes(where) {
    После выполнения функции, дерево <span> <div> <b>привет</b> </div> <p>loftchool</p> !!!</span>
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
-// function deleteTextNodesRecursive(where) {
-//   for (let el of where.childNodes){
-//     if (el.nodeType === 3){
-//       where.removeChild(el);
-//     }
 
-//     if(el.hasChildNodes()){
-//       var newchild = el.parentNode;
-//       deleteTextNodesRecursive(newchild);
-//     }
-
-//   }
-
-// }
-// function deleteTextNodesRecursive(where) {
-//   for (let el of where.childNodes){
-//     if (el.nodeType === 3){
-//       where.removeChild(el);
-//     }
-//     if (el.hasChildNodes){
-//       el.childNodes.forEach(deleteTextNodesRecursive());
-//     }
-
-//   }
-
-// }
 function deleteTextNodesRecursive(where) {
   const children = where.childNodes;
-  for (let i = 0; i < children.length; i++) {
-    if (children[i].nodeType === 3) {
-      where.removeChild(children[i--]);
-    } else if (children[i].nodeType === 1) {
-      if (children[i].hasChildNodes()) {
-        const newArg = children[i];
+
+  const clone = where.cloneNode();
+  const childClone = clone.childNodes;
+
+  for (let i = 0; i < childClone.length; i++) {
+    if (childClone[i].nodeType === 3) {
+      where.removeChild(children[i]);
+    } else if (childClone[i].nodeType === 1) {
+      if (childClone[i].hasChildNodes()) {
+        const newArg = childClone[i];
         deleteTextNodesRecursive(newArg);
       }
     }
@@ -177,22 +155,34 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
-  //   var elems = {};
-  //   for (let el of root.childNodes){
-  //     if(el.nodeType === 3){
-  //      let texts = elems.push(el.length);
-  //      return texts;
-  //     }
-  //     if (el.classList) {
-  //       let classes = el.getElementsByClassName().length;
-  //       return classes;
-  //     }
-  //     for (let i = 0; i < root.children.length; i++){
-  //       var tags = el.getElementsByTagName().length;
-  //       return tags;
-  //     }
-  //   }
-  //   return elems;
+  const elems = {
+    tags: {},
+    classes: {},
+    texts: 0,
+  };
+  function stat(root) {
+    for (const el of root.childNodes) {
+      if (el.nodeType === 3) {
+        elems.texts++;
+      } else if (el.nodeType === 1) {
+        if (el.tagName in elems.tags) {
+          elems.tags[el.tagName]++;
+        } else {
+          elems.tags[el.tagName] = 1;
+        }
+        for (const className of el.classList) {
+          if (className in elems.classes) {
+            elems.classes[className]++;
+          } else {
+            elems.classes[className] = 1;
+          }
+        }
+        stat(el);
+      }
+    }
+  }
+  stat(root);
+  return elems;
 }
 
 /*
@@ -220,7 +210,21 @@ function collectDOMStat(root) {
      nodes: [div]
    }
  */
-function observeChildNodes(where, fn) {}
+function observeChildNodes(where, fn) {
+  const lookForDom = new MutationObserver((changes) => {
+    changes.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        fn({
+          type: mutation.addedNodes.length ? 'insert' : 'remove',
+          nodes: [
+            ...(mutation.addedNodes.length ? mutation.addedNodes : mutation.removedNodes),
+          ],
+        });
+      }
+    });
+  });
+  lookForDom.observe(where, { childList: true, subtree: true });
+}
 
 export {
   createDivWithText,
