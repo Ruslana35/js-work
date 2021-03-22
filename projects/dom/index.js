@@ -119,18 +119,14 @@ function deleteTextNodes(where) {
  */
 
 function deleteTextNodesRecursive(where) {
-  const children = where.childNodes;
-
-  const clone = where.cloneNode();
-  const childClone = clone.childNodes;
+  const childClone = [...where.childNodes];
 
   for (let i = 0; i < childClone.length; i++) {
     if (childClone[i].nodeType === 3) {
-      where.removeChild(children[i]);
+      where.removeChild(childClone[i]);
     } else if (childClone[i].nodeType === 1) {
       if (childClone[i].hasChildNodes()) {
-        const newArg = childClone[i];
-        deleteTextNodesRecursive(newArg);
+        deleteTextNodesRecursive(childClone[i]);
       }
     }
   }
