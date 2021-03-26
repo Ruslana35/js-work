@@ -19,34 +19,7 @@ import './dnd.html';
 
 const homeworkContainer = document.querySelector('#app');
 
-document.addEventListener('mousemove', (e) => {
-  //   var coords = getCoords(newDiv);
-  //   var shiftX = e.pageX - coords.left;
-  //   var shiftY = e.pageY - coords.top;
-  //   newDiv.style.position = 'absolute';
-  //   document.body.appendChild(newDiv);
-  //   moveAt(e);
-  //   newDiv.style.zIndex = 1000;
-  //   function moveAt(e) {
-  //     newDiv.style.left = e.pageX - shiftX + 'px';
-  //     newDiv.style.top = e.pageY - shiftY + 'px';
-  //   }
-  //   newDiv.onmouseup = function() {
-  //     document.onmousemove = null;
-  //     newDiv.onmouseup = null;
-  //   };
-  //   newDiv.ondragstart = function() {
-  //     return false;
-  //   };
-  //   function getCoords(elem) {
-  //     var box = elem.getBoundingClientRect();
-  //     return {
-  //       top: box.top + pageYOffset,
-  //       left: box.left + pageXOffset
-  //     };
-  //   }
-  // })
-});
+document.addEventListener('mousemove', (e) => {});
 
 export function createDiv() {
   const div = document.createElement('div');
