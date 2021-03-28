@@ -18,45 +18,19 @@
 import './dnd.html';
 
 const homeworkContainer = document.querySelector('#app');
+function random(from, to) {
+  return parseInt(from + Math.random() * to - from);
+}
+
+let currentDiv;
+let shiftX = 0;
+let shiftY = 0;
 
 document.addEventListener('mousemove', (e) => {
-  document.addEventListener('mousemove', (e) => {
-    const div = document.querySelector('.draggable-div');
-    div.onmousedown = function (e) {
-      const coords = getCoords(div);
-      const shiftX = e.pageX - coords.left;
-      const shiftY = e.pageY - coords.top;
-
-      document.body.appendChild(div);
-      moveAt(e);
-
-      function moveAt(e) {
-        div.style.left = e.pageX - shiftX + 'px';
-        div.style.top = e.pageY - shiftY + 'px';
-      }
-
-      document.onmousemove = function (e) {
-        moveAt(e);
-      };
-
-      div.onmouseup = function () {
-        document.onmousemove = null;
-        div.onmouseup = null;
-      };
-    };
-
-    div.ondragstart = function () {
-      return false;
-    };
-
-    function getCoords(elem) {
-      const box = elem.getBoundingClientRect();
-      return {
-        top: box.top + pageYOffset,
-        left: box.left + pageXOffset,
-      };
-    }
-  });
+  if (currentDiv) {
+    currentDiv.style.left = e.clientX - shiftX + 'px';
+    currentDiv.style.top = e.clientY - shiftY + 'px';
+  }
 });
 
 export function createDiv() {
@@ -70,12 +44,18 @@ export function createDiv() {
   div.style.height = divsize + 'px';
   div.style.backgroundColor = color;
 
-  const posx = (Math.random() * (document.body.clientWidth - divsize)).toFixed();
-  const posy = (Math.random() * (document.body.clientHeight - divsize)).toFixed();
+  div.style.top = random(0, window.innerHeight) + 'px';
+  div.style.left = random(0, window.innerWidth) + 'px';
 
-  div.style.left = posx + 'px';
-  div.style.top = posy + 'px';
+  div.addEventListener('mousedown', (e) => {
+    currentDiv = div;
+    shiftX = e.offsetX;
+    shiftY = e.offsetY;
+  });
 
+  div.addEventListener('mouseup', (e) => {
+    currentDiv = false;
+  });
   return div;
 }
 
